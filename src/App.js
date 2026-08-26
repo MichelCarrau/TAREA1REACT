@@ -1,63 +1,58 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header/Header';
+import SearchBar from './components/SearchBar/SearchBar';
 import SearchResults from './components/SearchResults/SearchResults';
 import Library from './components/Library/Library';
-
-// Datos ficticios para resultados de búsqueda
-const datosFicticios = [
-  {
-    id: 1,
-    title: "Bohemian Rhapsody",
-    artist: "Queen",
-    album: "A Night at the Opera",
-    duration: "5:55"
-  },
-  {
-    id: 2,
-    title: "Imagine",
-    artist: "John Lennon",
-    album: "Imagine",
-    duration: "3:03"
-  },
-  {
-    id: 3,
-    title: "Billie Jean",
-    artist: "Michael Jackson",
-    album: "Thriller",
-    duration: "4:54"
-  },
-  {
-    id: 4,
-    title: "Like a Rolling Stone",
-    artist: "Bob Dylan",
-    album: "Highway 61 Revisited",
-    duration: "6:13"
-  },
-  {
-    id: 5,
-    title: "Stairway to Heaven",
-    artist: "Led Zeppelin",
-    album: "Led Zeppelin IV",
-    duration: "8:02"
-  },
-  {
-    id: 6,
-    title: "Smells Like Teen Spirit",
-    artist: "Nirvana",
-    album: "Nevermind",
-    duration: "5:01"
-  }
-];
+import SongDetail from './components/SongDetail/SongDetail';
+import useFetch from './hooks/UseFetch';
 
 const App = () => {
-  // Estado para resultados de búsqueda
-  const [searchResults] = useState(datosFicticios);
-  
-  // Estado para biblioteca personal (inicialmente vacía)
+  const [searchTerm, setSearchTerm] = useState('');
   const [library, setLibrary] = useState([]);
+  const [searchTrigger, setSearchTrigger] = useState('');
 
-  // useEffect para imprimir mensaje cuando la biblioteca se actualiza
+  // URL de la API basada en el término de búsqueda
+  const apiUrl = searchTrigger 
+  ? `https://corsproxy.io/?url=https://theaudiodb.com/api/v1/json/2/searchalbum.php?s=${searchTrigger}`
+  : '';
+
+  const { data, loading, error } = useFetch(apiUrl);
+
+  // Función para manejar la búsqueda
+  const handleSearch = (artist) => {
+    setSearchTrigger(artist);
+    setSearchTerm(artist);
+  };
+
+  // Función para reintentar
+  const handleRetry = () => {
+    if (searchTrigger) {
+      handleSearch(searchTrigger);
+    }
+  };
+
+  // Procesar datos de la API para transformarlos en canciones
+  const processSongs = () => {
+    if (!data || !data.album) return [];
+    
+    return data.album.map((album, index) => ({
+      id: album.idAlbum || `album-${index}`,
+      title: album.strAlbum || 'Álbum sin título',
+      artist: album.strArtist || searchTerm || 'Artista desconocido',
+      album: album.strAlbum || 'Álbum desconocido',
+      duration: null,
+      strTrack: album.strAlbum,
+      strArtist: album.strArtist,
+      strAlbum: album.strAlbum,
+      idAlbum: album.idAlbum
+    }));
+  };
+
+  const songs = processSongs();
+
+  // useEffect para la biblioteca
   useEffect(() => {
     console.log(`📚 Biblioteca actualizada: ${library.length} canciones`);
     if (library.length > 0) {
@@ -67,7 +62,6 @@ const App = () => {
 
   // Función para agregar canciones a la biblioteca
   const addToLibrary = (song) => {
-    // Verificar si la canción ya está en la biblioteca
     if (!library.some(libSong => libSong.title === song.title)) {
       setLibrary([...library, song]);
       console.log(`✅ Agregada: "${song.title}" - ${song.artist}`);
@@ -79,14 +73,29 @@ const App = () => {
   return (
     <div className="App">
       <Header />
-      <div className="app-content">
-        <SearchResults 
-          results={searchResults} 
-          onAddSong={addToLibrary}
-          library={library}
+      
+      <Routes>
+        <Route 
+          path="/" 
+          element={
+            <>
+              <SearchBar onSearch={handleSearch} />
+              <div className="app-content">
+                <SearchResults 
+                  results={songs}
+                  onAddSong={addToLibrary}
+                  library={library}
+                  loading={loading}
+                  error={error}
+                  onRetry={handleRetry}
+                />
+                <Library songs={library} />
+              </div>
+            </>
+          } 
         />
-        <Library songs={library} />
-      </div>
+        <Route path="/song/:id" element={<SongDetail />} />
+      </Routes>
     </div>
   );
 };

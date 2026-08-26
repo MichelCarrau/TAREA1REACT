@@ -93,3 +93,13 @@
   font-size: 0.85em;
   font-weight: 500;
 }
+.song-link {
+  color: #2d2d2d;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.song-link:hover {
+  color: #54428E;
+  text-decoration: underline;
+}
