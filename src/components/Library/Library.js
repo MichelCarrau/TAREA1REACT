@@ -1,8 +1,10 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux'; // Importar hooks
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { removeSong } from '../../redux/libraryActions'; // Importar action
 import Song from '../Song/Song';
+
+// Importar desde el reducer clásico (NO desde slices)
+import { removeSong } from '../../redux/libraryActions';
 
 const LibraryContainer = styled.div`
   background: ${props => props.theme.colors.white};
@@ -50,11 +52,6 @@ const SubText = styled.p`
   color: #bbb;
 `;
 
-// Componente extendido de Song con botón eliminar
-const SongWithRemove = styled.div`
-  position: relative;
-`;
-
 const RemoveButton = styled.button`
   background: #ffebee;
   color: #d32f2f;
@@ -72,13 +69,21 @@ const RemoveButton = styled.button`
   }
 `;
 
+const SongWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+const SongContainer = styled.div`
+  flex: 1;
+`;
+
 const Library = () => {
   const dispatch = useDispatch();
-  
-  // Obtener la biblioteca del estado global de Redux
-  const library = useSelector(state => state);
+  // Usar el estado del reducer clásico (no slices)
+  const library = useSelector((state) => state);
 
-  // Función para eliminar canción
   const handleRemoveSong = (songId) => {
     dispatch(removeSong(songId));
   };
@@ -104,24 +109,22 @@ const Library = () => {
         <SectionTitle>📚 Mi Biblioteca</SectionTitle>
         <Count>{library.length} canciones</Count>
       </SectionHeader>
-      <div>
-        {library.map((song) => (
-          <div key={song.id} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-            <div style={{ flex: 1 }}>
-              <Song
-                title={song.title}
-                artist={song.artist}
-                album={song.album}
-                duration={song.duration}
-                isInLibrary={true}
-              />
-            </div>
-            <RemoveButton onClick={() => handleRemoveSong(song.id)}>
-              🗑️ Eliminar
-            </RemoveButton>
-          </div>
-        ))}
-      </div>
+      {library.map((song) => (
+        <SongWrapper key={song.id}>
+          <SongContainer>
+            <Song
+              title={song.title}
+              artist={song.artist}
+              album={song.album}
+              duration={song.duration}
+              isInLibrary={true}
+            />
+          </SongContainer>
+          <RemoveButton onClick={() => handleRemoveSong(song.id)}>
+            🗑️ Eliminar
+          </RemoveButton>
+        </SongWrapper>
+      ))}
     </LibraryContainer>
   );
 };

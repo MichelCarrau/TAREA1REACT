@@ -1,8 +1,8 @@
 import React from 'react';
-import { useDispatch } from 'react-redux'; // Importar useDispatch
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { addSong } from '../../redux/libraryActions'; // Importar action
 import Song from '../Song/Song';
+import { addSong } from '../../redux/libraryActions';
 
 const ResultsContainer = styled.div`
   background: ${props => props.theme.colors.white};
@@ -81,11 +81,10 @@ const EmptyMessage = styled.div`
 `;
 
 const SearchResults = ({ results, loading, error, onRetry }) => {
-  const dispatch = useDispatch(); // Obtener dispatch
+  const dispatch = useDispatch();
+  const library = useSelector((state) => state);
 
-  // Función para agregar canción usando Redux
   const handleAddSong = (song) => {
-    // Asegurar que la canción tenga un ID único
     const songWithId = {
       ...song,
       id: song.id || `song-${Date.now()}-${Math.random()}`
@@ -147,8 +146,8 @@ const SearchResults = ({ results, loading, error, onRetry }) => {
             artist={song.artist || song.strArtist || 'Artista desconocido'}
             album={song.album || song.strAlbum || 'Álbum desconocido'}
             duration={song.duration || song.intDuration || 'N/A'}
-            onAdd={() => handleAddSong(song)} // Pasar función con dispatch
-            isInLibrary={false} // Ya no necesitamos esta prop
+            onAdd={() => handleAddSong(song)}
+            isInLibrary={library.some(libSong => libSong.id === song.id)}
             showLink={true}
           />
         ))}

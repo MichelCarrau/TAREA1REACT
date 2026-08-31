@@ -58,6 +58,7 @@ const SearchBar = ({ onSearch }) => {
   return (
     <SearchContainer onSubmit={handleSubmit}>
       <SearchInput
+        id="search-artist"
         type="text"
         placeholder="Busca un artista... (ej: Coldplay, Oasis)"
         value={artist}
