@@ -22,9 +22,9 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTrigger, setSearchTrigger] = useState('');
 
-  const apiUrl = searchTrigger 
-    ? `/api/v1/json/2/searchalbum.php?s=${searchTrigger}`
-    : '';
+ const apiUrl = searchTrigger 
+  ? `https://corsproxy.io/?url=https://theaudiodb.com/api/v1/json/2/searchalbum.php?s=${searchTrigger}`
+  : '';
 
   const { data, loading, error } = useFetch(apiUrl);
 
