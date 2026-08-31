@@ -57,6 +57,12 @@ const ErrorMessage = styled.div`
   color: ${props => props.theme.colors.error};
 `;
 
+const ErrorHint = styled.p`
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 5px;
+`;
+
 const RetryButton = styled.button`
   background: ${props => props.theme.colors.primary};
   color: ${props => props.theme.colors.white};
@@ -123,6 +129,9 @@ const SearchResults = () => {
         </SectionHeader>
         <ErrorMessage>
           <p>⚠️ {error}</p>
+          <ErrorHint>
+            💡 Recuerda: busca por nombre de artista (ej: Coldplay, Oasis, Queen)
+          </ErrorHint>
           <RetryButton onClick={handleRetry}>🔄 Reintentar</RetryButton>
         </ErrorMessage>
       </ResultsContainer>

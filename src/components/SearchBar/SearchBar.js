@@ -55,6 +55,7 @@ const SearchBar = () => {
     e.preventDefault();
     if (artist.trim()) {
       dispatch(fetchSongs(artist.trim()));
+      localStorage.setItem('lastSearch', artist.trim());
     }
   };
 
@@ -63,7 +64,7 @@ const SearchBar = () => {
       <SearchInput
         id="search-artist"
         type="text"
-        placeholder="Busca un artista... (ej: Coldplay, Oasis)"
+        placeholder="Busca un artista... (ej: Coldplay, Oasis, Queen)"
         value={artist}
         onChange={(e) => setArtist(e.target.value)}
       />
