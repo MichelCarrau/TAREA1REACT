@@ -1,10 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import Song from '../Song/Song';
-
-// Importar desde el reducer clásico (NO desde slices)
 import { removeSong } from '../../redux/libraryActions';
+import Song from '../Song/Song';
 
 const LibraryContainer = styled.div`
   background: ${props => props.theme.colors.white};
@@ -81,8 +79,7 @@ const SongContainer = styled.div`
 
 const Library = () => {
   const dispatch = useDispatch();
-  // Usar el estado del reducer clásico (no slices)
-  const library = useSelector((state) => state);
+  const library = useSelector((state) => state.library || state);
 
   const handleRemoveSong = (songId) => {
     dispatch(removeSong(songId));

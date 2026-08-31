@@ -82,7 +82,7 @@ const EmptyMessage = styled.div`
 
 const SearchResults = ({ results, loading, error, onRetry }) => {
   const dispatch = useDispatch();
-  const library = useSelector((state) => state);
+  const library = useSelector((state) => state.library || state);
 
   const handleAddSong = (song) => {
     const songWithId = {
