@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { fetchSongs } from '../../redux/slices/searchSlice';
 
 const SearchContainer = styled.form`
   display: flex;
@@ -45,13 +47,14 @@ const SearchButton = styled.button`
   }
 `;
 
-const SearchBar = ({ onSearch }) => {
+const SearchBar = () => {
   const [artist, setArtist] = useState('');
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (artist.trim()) {
-      onSearch(artist.trim());
+      dispatch(fetchSongs(artist.trim()));
     }
   };
 

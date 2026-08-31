@@ -2,16 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { Provider } from 'react-redux'; // Importar Provider
+import { Provider } from 'react-redux';
 import { theme } from './styles/theme';
 import { GlobalStyle } from './styles/GlobalStyle';
-import store from './redux/store'; // Importar store
+import store from './redux/store';
 import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Provider store={store}> {/* Envolver con Provider */}
+    <Provider store={store}>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
         <BrowserRouter>

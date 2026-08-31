@@ -1,8 +1,9 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { addSong } from '../../redux/slices/librarySlice';
+import { fetchSongs } from '../../redux/slices/searchSlice';
 import Song from '../Song/Song';
-import { addSong } from '../../redux/libraryActions';
 
 const ResultsContainer = styled.div`
   background: ${props => props.theme.colors.white};
@@ -80,16 +81,24 @@ const EmptyMessage = styled.div`
   font-size: 1.1em;
 `;
 
-const SearchResults = ({ results, loading, error, onRetry }) => {
+const SearchResults = () => {
   const dispatch = useDispatch();
-  const library = useSelector((state) => state.library || state);
+  const { results, loading, error } = useSelector((state) => state.search);
+  const library = useSelector((state) => state.library);
 
   const handleAddSong = (song) => {
     const songWithId = {
       ...song,
-      id: song.id || `song-${Date.now()}-${Math.random()}`
+      id: song.id || `song-${Date.now()}`
     };
     dispatch(addSong(songWithId));
+  };
+
+  const handleRetry = () => {
+    const lastSearch = localStorage.getItem('lastSearch') || '';
+    if (lastSearch) {
+      dispatch(fetchSongs(lastSearch));
+    }
   };
 
   if (loading) {
@@ -114,7 +123,7 @@ const SearchResults = ({ results, loading, error, onRetry }) => {
         </SectionHeader>
         <ErrorMessage>
           <p>⚠️ {error}</p>
-          <RetryButton onClick={onRetry}>🔄 Reintentar</RetryButton>
+          <RetryButton onClick={handleRetry}>🔄 Reintentar</RetryButton>
         </ErrorMessage>
       </ResultsContainer>
     );
@@ -142,10 +151,10 @@ const SearchResults = ({ results, loading, error, onRetry }) => {
           <Song
             key={song.id || `result-${index}`}
             id={song.id || `song-${index}`}
-            title={song.title || song.strTrack || 'Sin título'}
-            artist={song.artist || song.strArtist || 'Artista desconocido'}
-            album={song.album || song.strAlbum || 'Álbum desconocido'}
-            duration={song.duration || song.intDuration || 'N/A'}
+            title={song.title || 'Sin título'}
+            artist={song.artist || 'Artista desconocido'}
+            album={song.album || 'Álbum desconocido'}
+            duration={song.duration || 'N/A'}
             onAdd={() => handleAddSong(song)}
             isInLibrary={library.some(libSong => libSong.id === song.id)}
             showLink={true}

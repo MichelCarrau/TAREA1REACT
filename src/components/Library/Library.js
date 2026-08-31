@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { removeSong } from '../../redux/libraryActions';
+import { removeSong } from '../../redux/slices/librarySlice';
 import Song from '../Song/Song';
 
 const LibraryContainer = styled.div`
@@ -79,7 +79,7 @@ const SongContainer = styled.div`
 
 const Library = () => {
   const dispatch = useDispatch();
-  const library = useSelector((state) => state.library || state);
+  const library = useSelector((state) => state.library);
 
   const handleRemoveSong = (songId) => {
     dispatch(removeSong(songId));
