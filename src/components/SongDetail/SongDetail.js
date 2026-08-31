@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom'; // 👈 IMPORTAR useParams y Link
 import styled from 'styled-components';
-import { useParams, Link } from 'react-router-dom';
-import useFetch from '../../hooks/useFetch';
+import useFetch from '../../hooks/UseFetch'; // 👈 IMPORTAR useFetch
 
 const DetailContainer = styled.div`
   max-width: 800px;
@@ -121,11 +121,16 @@ const ErrorMessage = styled.div`
 `;
 
 const SongDetail = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Obtener ID de la URL
   
   const { data, loading, error } = useFetch(
     `https://theaudiodb.com/api/v1/json/2/album.php?m=${id}`
   );
+
+  // Log cuando se carga el detalle
+  useEffect(() => {
+    console.log(`🔍 Detalle de canción ID: ${id}`);
+  }, [id]);
 
   if (loading) {
     return (

@@ -2,6 +2,7 @@
   "name": "biblioteca-musical",
   "version": "0.1.0",
   "private": true,
+    "proxy": "https://theaudiodb.com", 
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -9,8 +10,10 @@
     "@testing-library/user-event": "^13.5.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-redux": "^9.3.0",
     "react-router-dom": "^7.18.2",
     "react-scripts": "5.0.1",
+    "redux": "^5.0.1",
     "styled-components": "^6.5.3",
     "web-vitals": "^2.1.4"
   },

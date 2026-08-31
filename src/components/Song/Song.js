@@ -165,7 +165,7 @@ const Song = ({ title, artist, album, duration, onAdd, isInLibrary, id, showLink
       <SongRight>
         {duration && <SongDuration>⏱️ {duration}</SongDuration>}
         {onAdd && !isInLibrary && (
-          <AddButton onClick={() => onAdd({ title, artist, album, duration })}>
+          <AddButton onClick={onAdd}>
             ➕ Agregar
           </AddButton>
         )}

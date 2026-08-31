@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import styled from 'styled-components';
 import Header from './components/Header/Header';
@@ -6,7 +6,7 @@ import SearchBar from './components/SearchBar/SearchBar';
 import SearchResults from './components/SearchResults/SearchResults';
 import Library from './components/Library/Library';
 import SongDetail from './components/SongDetail/SongDetail';
-import useFetch from './hooks/useFetch';
+import useFetch from './hooks/UseFetch';
 
 const AppContainer = styled.div`
   display: grid;
@@ -20,7 +20,6 @@ const AppContainer = styled.div`
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [library, setLibrary] = useState([]);
   const [searchTrigger, setSearchTrigger] = useState('');
 
   const apiUrl = searchTrigger 
@@ -58,22 +57,6 @@ const App = () => {
 
   const songs = processSongs();
 
-  useEffect(() => {
-    console.log(`📚 Biblioteca actualizada: ${library.length} canciones`);
-    if (library.length > 0) {
-      console.log('🎵 Canciones en biblioteca:', library.map(s => s.title).join(', '));
-    }
-  }, [library]);
-
-  const addToLibrary = (song) => {
-    if (!library.some(libSong => libSong.title === song.title)) {
-      setLibrary([...library, song]);
-      console.log(`✅ Agregada: "${song.title}" - ${song.artist}`);
-    } else {
-      console.log(`⚠️ "${song.title}" ya está en tu biblioteca`);
-    }
-  };
-
   return (
     <div>
       <Header />
@@ -87,13 +70,11 @@ const App = () => {
               <AppContainer>
                 <SearchResults 
                   results={songs}
-                  onAddSong={addToLibrary}
-                  library={library}
                   loading={loading}
                   error={error}
                   onRetry={handleRetry}
                 />
-                <Library songs={library} />
+                <Library />
               </AppContainer>
             </>
           } 
