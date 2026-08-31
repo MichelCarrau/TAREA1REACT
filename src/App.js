@@ -1,39 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import './App.css';
+import styled from 'styled-components';
 import Header from './components/Header/Header';
 import SearchBar from './components/SearchBar/SearchBar';
 import SearchResults from './components/SearchResults/SearchResults';
 import Library from './components/Library/Library';
 import SongDetail from './components/SongDetail/SongDetail';
-import useFetch from './hooks/UseFetch';
+import useFetch from './hooks/useFetch';
+
+const AppContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [library, setLibrary] = useState([]);
   const [searchTrigger, setSearchTrigger] = useState('');
 
-  // URL de la API basada en el término de búsqueda
   const apiUrl = searchTrigger 
-  ? `https://corsproxy.io/?url=https://theaudiodb.com/api/v1/json/2/searchalbum.php?s=${searchTrigger}`
-  : '';
+    ? `/api/v1/json/2/searchalbum.php?s=${searchTrigger}`
+    : '';
 
   const { data, loading, error } = useFetch(apiUrl);
 
-  // Función para manejar la búsqueda
   const handleSearch = (artist) => {
     setSearchTrigger(artist);
     setSearchTerm(artist);
   };
 
-  // Función para reintentar
   const handleRetry = () => {
     if (searchTrigger) {
       handleSearch(searchTrigger);
     }
   };
 
-  // Procesar datos de la API para transformarlos en canciones
   const processSongs = () => {
     if (!data || !data.album) return [];
     
@@ -52,7 +58,6 @@ const App = () => {
 
   const songs = processSongs();
 
-  // useEffect para la biblioteca
   useEffect(() => {
     console.log(`📚 Biblioteca actualizada: ${library.length} canciones`);
     if (library.length > 0) {
@@ -60,7 +65,6 @@ const App = () => {
     }
   }, [library]);
 
-  // Función para agregar canciones a la biblioteca
   const addToLibrary = (song) => {
     if (!library.some(libSong => libSong.title === song.title)) {
       setLibrary([...library, song]);
@@ -71,7 +75,7 @@ const App = () => {
   };
 
   return (
-    <div className="App">
+    <div>
       <Header />
       
       <Routes>
@@ -80,7 +84,7 @@ const App = () => {
           element={
             <>
               <SearchBar onSearch={handleSearch} />
-              <div className="app-content">
+              <AppContainer>
                 <SearchResults 
                   results={songs}
                   onAddSong={addToLibrary}
@@ -90,7 +94,7 @@ const App = () => {
                   onRetry={handleRetry}
                 />
                 <Library songs={library} />
-              </div>
+              </AppContainer>
             </>
           } 
         />

@@ -1,21 +1,67 @@
 import React from 'react';
+import styled from 'styled-components';
 import Song from '../Song/Song';
-import './Library.css';
+
+const LibraryContainer = styled.div`
+  background: ${props => props.theme.colors.white};
+  border-radius: ${props => props.theme.borderRadius.large};
+  padding: 25px;
+  box-shadow: ${props => props.theme.shadows.medium};
+  border: 2px solid ${props => props.theme.colors.secondary};
+`;
+
+const SectionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid ${props => props.theme.colors.secondary};
+  padding-bottom: 15px;
+`;
+
+const SectionTitle = styled.h2`
+  color: ${props => props.theme.colors.black};
+  font-size: 1.5em;
+`;
+
+const Count = styled.span`
+  background: #f5f3ff;
+  color: ${props => props.theme.colors.primary};
+  padding: 4px 14px;
+  border-radius: 15px;
+  font-weight: 500;
+`;
+
+const EmptyLibrary = styled.div`
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+`;
+
+const EmptyText = styled.p`
+  font-size: 1.1em;
+  margin-bottom: 5px;
+`;
+
+const SubText = styled.p`
+  font-size: 0.9em;
+  color: #bbb;
+`;
 
 const Library = ({ songs }) => {
   return (
-    <div className="library">
-      <div className="section-header">
-        <h2>📚 Mi Biblioteca</h2>
-        <span className="count">{songs.length} canciones</span>
-      </div>
+    <LibraryContainer>
+      <SectionHeader>
+        <SectionTitle>📚 Mi Biblioteca</SectionTitle>
+        <Count>{songs.length} canciones</Count>
+      </SectionHeader>
       {songs.length === 0 ? (
-        <div className="empty-library">
-          <p>🎶 No tienes canciones guardadas</p>
-          <p className="sub-text">Busca y agrega tus canciones favoritas</p>
-        </div>
+        <EmptyLibrary>
+          <EmptyText>🎶 No tienes canciones guardadas</EmptyText>
+          <SubText>Busca y agrega tus canciones favoritas</SubText>
+        </EmptyLibrary>
       ) : (
-        <div className="songs-list">
+        <div>
           {songs.map((song, index) => (
             <Song
               key={`library-${index}`}
@@ -28,7 +74,7 @@ const Library = ({ songs }) => {
           ))}
         </div>
       )}
-    </div>
+    </LibraryContainer>
   );
 };
 

@@ -1,101 +1,214 @@
 import React from 'react';
+import styled from 'styled-components';
 import { useParams, Link } from 'react-router-dom';
-import useFetch from '../../hooks/UseFetch';
-import './SongDetail.css';
+import useFetch from '../../hooks/useFetch';
+
+const DetailContainer = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+`;
+
+const BackButton = styled(Link)`
+  display: inline-block;
+  background: ${props => props.theme.colors.primary};
+  color: ${props => props.theme.colors.white};
+  padding: 10px 25px;
+  border-radius: ${props => props.theme.borderRadius.small};
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 25px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: ${props => props.theme.colors.primaryLight};
+    transform: translateX(-5px);
+  }
+`;
+
+const DetailCard = styled.div`
+  background: ${props => props.theme.colors.white};
+  border-radius: ${props => props.theme.borderRadius.xlarge};
+  padding: 35px;
+  box-shadow: ${props => props.theme.shadows.large};
+`;
+
+const DetailHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+  border-bottom: 3px solid #f0f0f0;
+  padding-bottom: 20px;
+`;
+
+const DetailIcon = styled.div`
+  font-size: 3em;
+  width: 70px;
+  height: 70px;
+  background: #f5f3ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const DetailTitle = styled.h1`
+  color: ${props => props.theme.colors.black};
+  font-size: 2em;
+`;
+
+const DetailInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+`;
+
+const DetailRow = styled.div`
+  display: flex;
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f5f5;
+`;
+
+const DetailLabel = styled.span`
+  font-weight: 600;
+  color: ${props => props.theme.colors.gray};
+  min-width: 120px;
+`;
+
+const DetailValue = styled.span`
+  color: ${props => props.theme.colors.black};
+`;
+
+const DescriptionRow = styled(DetailRow)`
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const DescriptionText = styled.p`
+  line-height: 1.6;
+  color: #444;
+  margin: 0;
+`;
+
+const AlbumCover = styled.img`
+  width: 100%;
+  max-width: 300px;
+  border-radius: ${props => props.theme.borderRadius.small};
+  margin-top: 20px;
+  box-shadow: ${props => props.theme.shadows.small};
+`;
+
+const LoadingMessage = styled.div`
+  text-align: center;
+  padding: 40px 20px;
+`;
+
+const Spinner = styled.div`
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f0f0f0;
+  border-top: 4px solid ${props => props.theme.colors.primary};
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+`;
+
+const ErrorMessage = styled.div`
+  text-align: center;
+  padding: 40px 20px;
+  color: ${props => props.theme.colors.error};
+`;
 
 const SongDetail = () => {
   const { id } = useParams();
   
-  // Buscar detalles del álbum usando el ID
   const { data, loading, error } = useFetch(
     `https://theaudiodb.com/api/v1/json/2/album.php?m=${id}`
   );
 
   if (loading) {
     return (
-      <div className="song-detail-container">
-        <div className="loading-message">
-          <div className="spinner"></div>
+      <DetailContainer>
+        <LoadingMessage>
+          <Spinner />
           <p>Cargando detalles de la canción...</p>
-        </div>
-      </div>
+        </LoadingMessage>
+      </DetailContainer>
     );
   }
 
   if (error) {
     return (
-      <div className="song-detail-container">
-        <div className="error-message">
+      <DetailContainer>
+        <ErrorMessage>
           <p>⚠️ {error}</p>
-          <Link to="/" className="back-button">← Volver a buscar</Link>
-        </div>
-      </div>
+          <BackButton to="/">← Volver a buscar</BackButton>
+        </ErrorMessage>
+      </DetailContainer>
     );
   }
 
   if (!data || !data.album) {
     return (
-      <div className="song-detail-container">
-        <div className="empty-message">
+      <DetailContainer>
+        <ErrorMessage>
           <p>🎵 No se encontraron detalles de esta canción</p>
-          <Link to="/" className="back-button">← Volver a buscar</Link>
-        </div>
-      </div>
+          <BackButton to="/">← Volver a buscar</BackButton>
+        </ErrorMessage>
+      </DetailContainer>
     );
   }
 
   const album = data.album[0];
 
   return (
-    <div className="song-detail-container">
-      <Link to="/" className="back-button">← Volver a buscar</Link>
+    <DetailContainer>
+      <BackButton to="/">← Volver a buscar</BackButton>
       
-      <div className="song-detail-card">
-        <div className="detail-header">
-          <div className="detail-icon">🎵</div>
-          <h1>{album.strAlbum || 'Álbum sin título'}</h1>
-        </div>
+      <DetailCard>
+        <DetailHeader>
+          <DetailIcon>🎵</DetailIcon>
+          <DetailTitle>{album.strAlbum || 'Álbum sin título'}</DetailTitle>
+        </DetailHeader>
         
-        <div className="detail-info">
-          <div className="detail-row">
-            <span className="detail-label">🎤 Artista:</span>
-            <span className="detail-value">{album.strArtist || 'Desconocido'}</span>
-          </div>
+        <DetailInfo>
+          <DetailRow>
+            <DetailLabel>🎤 Artista:</DetailLabel>
+            <DetailValue>{album.strArtist || 'Desconocido'}</DetailValue>
+          </DetailRow>
           
-          <div className="detail-row">
-            <span className="detail-label">💿 Álbum:</span>
-            <span className="detail-value">{album.strAlbum || 'Desconocido'}</span>
-          </div>
+          <DetailRow>
+            <DetailLabel>💿 Álbum:</DetailLabel>
+            <DetailValue>{album.strAlbum || 'Desconocido'}</DetailValue>
+          </DetailRow>
           
-          <div className="detail-row">
-            <span className="detail-label">📅 Año:</span>
-            <span className="detail-value">{album.intYearReleased || 'Desconocido'}</span>
-          </div>
+          <DetailRow>
+            <DetailLabel>📅 Año:</DetailLabel>
+            <DetailValue>{album.intYearReleased || 'Desconocido'}</DetailValue>
+          </DetailRow>
           
-          <div className="detail-row">
-            <span className="detail-label">🏷️ Género:</span>
-            <span className="detail-value">{album.strGenre || 'Desconocido'}</span>
-          </div>
+          <DetailRow>
+            <DetailLabel>🏷️ Género:</DetailLabel>
+            <DetailValue>{album.strGenre || 'Desconocido'}</DetailValue>
+          </DetailRow>
           
           {album.strDescriptionEN && (
-            <div className="detail-row description">
-              <span className="detail-label">📝 Descripción:</span>
-              <p className="detail-value description-text">
-                {album.strDescriptionEN}
-              </p>
-            </div>
+            <DescriptionRow>
+              <DetailLabel>📝 Descripción:</DetailLabel>
+              <DescriptionText>{album.strDescriptionEN}</DescriptionText>
+            </DescriptionRow>
           )}
-        </div>
+        </DetailInfo>
         
         {album.strAlbumThumb && (
-          <img 
+          <AlbumCover 
             src={album.strAlbumThumb} 
             alt={album.strAlbum} 
-            className="album-cover"
           />
         )}
-      </div>
-    </div>
+      </DetailCard>
+    </DetailContainer>
   );
 };
 
