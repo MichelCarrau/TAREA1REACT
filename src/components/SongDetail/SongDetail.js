@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom'; // 👈 IMPORTAR useParams y Link
+import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import useFetch from '../../hooks/UseFetch'; // 👈 IMPORTAR useFetch
+import useFetch from '../../hooks/UseFetch';
 
 const DetailContainer = styled.div`
   max-width: 800px;
@@ -121,15 +121,14 @@ const ErrorMessage = styled.div`
 `;
 
 const SongDetail = () => {
-  const { id } = useParams(); // Obtener ID de la URL
-  
+  const { id } = useParams();
+
   const { data, loading, error } = useFetch(
     `https://theaudiodb.com/api/v1/json/2/album.php?m=${id}`
   );
 
-  // Log cuando se carga el detalle
   useEffect(() => {
-    console.log(`🔍 Detalle de canción ID: ${id}`);
+    console.log(`Detalle de canción ID: ${id}`);
   }, [id]);
 
   if (loading) {
@@ -148,70 +147,66 @@ const SongDetail = () => {
       <DetailContainer>
         <ErrorMessage>
           <p>⚠️ {error}</p>
-          <BackButton to="/">← Volver a buscar</BackButton>
+          <BackButton to="/">← Volver</BackButton>
         </ErrorMessage>
       </DetailContainer>
     );
   }
 
-  if (!data || !data.album) {
+  const album = data?.album?.[0];
+
+  if (!album) {
     return (
       <DetailContainer>
         <ErrorMessage>
-          <p>🎵 No se encontraron detalles de esta canción</p>
-          <BackButton to="/">← Volver a buscar</BackButton>
+          <p>No se encontró información del álbum</p>
+          <BackButton to="/">← Volver</BackButton>
         </ErrorMessage>
       </DetailContainer>
     );
   }
 
-  const album = data.album[0];
-
   return (
     <DetailContainer>
-      <BackButton to="/">← Volver a buscar</BackButton>
-      
+      <BackButton to="/">← Volver</BackButton>
       <DetailCard>
         <DetailHeader>
           <DetailIcon>🎵</DetailIcon>
           <DetailTitle>{album.strAlbum || 'Álbum sin título'}</DetailTitle>
         </DetailHeader>
-        
+
         <DetailInfo>
           <DetailRow>
             <DetailLabel>🎤 Artista:</DetailLabel>
             <DetailValue>{album.strArtist || 'Desconocido'}</DetailValue>
           </DetailRow>
-          
+
           <DetailRow>
             <DetailLabel>💿 Álbum:</DetailLabel>
             <DetailValue>{album.strAlbum || 'Desconocido'}</DetailValue>
           </DetailRow>
-          
+
           <DetailRow>
             <DetailLabel>📅 Año:</DetailLabel>
             <DetailValue>{album.intYearReleased || 'Desconocido'}</DetailValue>
           </DetailRow>
-          
+
           <DetailRow>
-            <DetailLabel>🏷️ Género:</DetailLabel>
+            <DetailLabel>🎸 Género:</DetailLabel>
             <DetailValue>{album.strGenre || 'Desconocido'}</DetailValue>
           </DetailRow>
-          
+
           {album.strDescriptionEN && (
             <DescriptionRow>
               <DetailLabel>📝 Descripción:</DetailLabel>
               <DescriptionText>{album.strDescriptionEN}</DescriptionText>
             </DescriptionRow>
           )}
+
+          {album.strAlbumThumb && (
+            <AlbumCover src={album.strAlbumThumb} alt={album.strAlbum} />
+          )}
         </DetailInfo>
-        
-        {album.strAlbumThumb && (
-          <AlbumCover 
-            src={album.strAlbumThumb} 
-            alt={album.strAlbum} 
-          />
-        )}
       </DetailCard>
     </DetailContainer>
   );

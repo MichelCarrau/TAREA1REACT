@@ -50,20 +50,20 @@ const searchSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchSongs.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-        state.results = [];
-      })
-      .addCase(fetchSongs.fulfilled, (state, action) => {
-        state.loading = false;
-        state.results = action.payload;
-        state.error = null;
-      })
-      .addCase(fetchSongs.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || 'Error al cargar los datos';
-        state.results = [];
-      });
+  state.loading = true;
+  state.error = null;
+  state.results = [];
+})
+.addCase(fetchSongs.fulfilled, (state, action) => {
+  state.loading = false;
+  state.results = action.payload;
+  state.error = null;
+})
+.addCase(fetchSongs.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload || 'Error al cargar los datos';
+  state.results = [];
+});
   }
 });
 
